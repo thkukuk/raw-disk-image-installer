@@ -20,7 +20,7 @@ select_target_device()
     # Find all storage devices
     local DEVICE_LIST=""
 
-    while read -r dev size_bytes type model; do
+    while read -r dev size_bytes type transport model; do
 	if [[ "$type" != "disk" ]]; then continue; fi
 	if [[ "$dev" == *"$CURRENT_DISK_NAME"* ]]; then continue; fi
 	if [ "$size_bytes" -lt "$MIN_SIZE_BYTES" ]; then continue; fi
@@ -28,8 +28,8 @@ select_target_device()
 	human_size=$(numfmt --to=iec --suffix=B "$size_bytes")
 	[ -z "$model" ] && model="Unknown"
 
-	DEVICE_LIST+="$dev  - $model ($human_size)\n"
-    done < <(lsblk -dnp -b -o NAME,SIZE,TYPE,MODEL)
+	DEVICE_LIST+="$dev  - $model ($transport, $human_size)\n"
+    done < <(lsblk -dnp -b -o NAME,SIZE,TYPE,TRAN,MODEL)
 
     if [ -z "$DEVICE_LIST" ]; then
 	gum style --foreground="$COLOR_WARNING" "No suitable drives >10GB found."
