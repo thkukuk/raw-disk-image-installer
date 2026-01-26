@@ -24,8 +24,11 @@ VERSION=@VERSION@
 
 KEYWAIT=keywait
 
+# shellcheck source=keymap.sh
 source @RDIIDIR@/keymap.sh
+# shellcheck source=target_device.sh
 source @RDIIDIR@/target_device.sh
+# shellcheck source=select_image.sh
 source @RDIIDIR@/select_image.sh
 
 clear_and_print_title()
