@@ -80,7 +80,7 @@ print_error(void)
 int
 main(int argc, char **argv)
 {
-  const char *text = "Please press a key...";
+  const char *text = "Please press any key...";
   int seconds = 5;
   int r;
 
