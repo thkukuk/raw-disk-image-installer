@@ -42,7 +42,7 @@ elif [ -x /usr/sbin/parted ]; then
     /usr/sbin/parted -s "$IMG_NAME" \
 		     mklabel gpt \
 		     unit s \
-		     mkpart "EFI System Partition" fat32 $START_SECTOR $((START_SECTOR + ESP_SECTORS - 1)) \
+		     mkpart '"EFI System Partition"' fat32 $START_SECTOR $((START_SECTOR + ESP_SECTORS - 1)) \
 		     set 1 esp on
 else
     echo "ERROR: neither sgdisk nor parted installed!" >&2
