@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="keywait" xml:lang="en">
+
+  <refmeta>
+    <refentrytitle>keywait</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo class="source">raw-disk-image-installer %version%</refmiscinfo>
+    <refmiscinfo class="manual">keywait</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>keywait</refname>
+    <refpurpose>wait for key pressed or timeout</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>keywait</command>
+      <group choice="opt">
+        <arg choice="plain"><option>-t</option></arg>
+        <arg choice="plain"><option>--text</option></arg>
+        <arg choice="plain"><replaceable>msg</replaceable></arg>
+      </group>
+      <group choice="opt">
+        <arg choice="plain"><option>-s</option></arg>
+        <arg choice="plain"><option>--timeout</option></arg>
+        <arg choice="plain"><replaceable>seconds</replaceable></arg>
+      </group>
+      <arg choice="opt"><option>--help</option></arg>
+      <arg choice="opt"><option>--version</option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+      <command>keywait</command> is a utility that pauses execution
+      until the user presses a key or a specified timeout period
+      elapses, whichever happens first.
+    </para>
+    <para>
+      This command is primarily for shell scripts to prompt the user
+      to continue or to pause for a specified amount of time.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Options</title>
+    <variablelist>
+
+      <varlistentry>
+        <term>
+	  <option>-t, --text</option> <replaceable>msg</replaceable>
+	</term>
+        <listitem>
+          <para>
+            Text to display to the user while waiting. The default message
+	    is "Please press any key...".
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-s, --timeout</option> <replaceable>seconds</replaceable></term>
+        <listitem>
+          <para>
+            Set the timeout in seconds. If the user does not press a key
+	    within this time frame, the program will terminate automatically.
+	    The default is <replaceable>5 seconds</replaceable>. A value
+	    of <replaceable>0</replaceable> will disable the timeout.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-h, --help</option></term>
+        <listitem>
+          <para>Display a help list describing the usage and options.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-v, --version</option></term>
+        <listitem>
+          <para>Print the program version information.</para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Exit Status</title>
+    <para>
+      <command>keywait</command> returns <returnvalue>0</returnvalue> if
+      a key was pressed or the timeout occurred successfully.
+    </para>
+  </refsect1>
+
+</refentry>

@@ -15,6 +15,13 @@ mandir1 = get_option('mandir') / 'man1'
 mandir8 = get_option('mandir') / 'man8'
 
 if xsltproc_exe.found()
+custom_target('keywait.1',
+              input : 'keywait.1.xml',
+              output : 'keywait.1',
+              command : xslt_cmd + [custom_man_xsl, '@INPUT@'],
+              install : want_man,
+              install_dir : mandir1)
+
 custom_target('ifcfg-networkd.8',
               input : 'ifcfg-networkd.8.xml',
               output : 'ifcfg-networkd.8',
