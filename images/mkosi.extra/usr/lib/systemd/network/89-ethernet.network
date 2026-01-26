@@ -1,0 +1,17 @@
+[Match]
+Name=*
+Type=ether
+
+[Network]
+DHCP=yes
+
+# Configure DHCPv4 specific settings
+[DHCPv4]
+UseHostname=false
+UseDNS=true
+UseNTP=true
+
+# Configure DHCPv6 specific settings (optional, but good practice)
+[DHCPv6]
+UseHostname=false
+UseDNS=true

@@ -1,0 +1,172 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: MIT
+
+# Official openSUSE Color Palette
+OPENSUSE_GREEN="#73ba25"     # Green
+OPENSUSE_DARKBLUE="#173f4f"  # Dark Blue
+OPENSUSE_CYAN="#35b9ab"      # Cyan
+# Secondary colors
+OPENSUSE_DARKCYAN="#00a489"  # Dark Cyan
+OPENSUSE_DARKGREEN="#6da741" # Dark Green
+OPENSUSE_BLUE="#21a4df"      # Blue
+
+COLOR_RED="#FF0000"
+
+COLOR_BACKGROUND=$OPENSUSE_DARKBLUE
+COLOR_FOREGROUND=$OPENSUSE_GREEN
+COLOR_TITLE=$OPENSUSE_BLUE
+COLOR_TEXT=$OPENSUSE_CYAN
+#COLOR_WARNING=$OPENSUSE_DARKCYAN
+COLOR_WARNING=$COLOR_RED
+
+VERSION=@VERSION@
+
+KEYWAIT=keywait
+
+source @RDIIDIR@/keymap.sh
+source @RDIIDIR@/target_device.sh
+source @RDIIDIR@/select_image.sh
+
+clear_and_print_title()
+{
+    clear
+    gum style \
+	--align center \
+	--width 80 \
+	--background "$COLOR_BACKGROUND" \
+	--foreground "$COLOR_FOREGROUND" \
+	"Raw Disk Image Installer ${VERSION}"
+    echo ""
+}
+
+# Check for gum
+if ! command -v gum &> /dev/null; then
+    echo "Error: 'gum' is not installed."
+    exit 1
+fi
+
+#
+# Initialize some defaults
+#
+# Read current KEYMAP from /etc/vconsole.conf
+DEFAULT_KEYMAP="us"
+VCONSOLE_FILE="/etc/vconsole.conf"
+TARGET_DEVICE=""
+SOURCE_IMAGE=""
+
+if [ -f "$VCONSOLE_FILE" ]; then
+    # sourcing in a subshell to avoid polluting current environment,
+    # though straightforward sourcing is also fine.
+    # shellcheck source=/dev/null
+    DEFAULT_KEYMAP=$(source "$VCONSOLE_FILE" && echo "$KEYMAP")
+fi
+
+clear
+
+# Splash screen at start
+
+gum style \
+    --border double \
+    --align center \
+    --width 70 \
+    --margin "1 2" \
+    --padding "2 4" \
+    --border-background "$COLOR_BACKGROUND"\
+    --border-foreground "$COLOR_FOREGROUND" \
+    --background "$COLOR_BACKGROUND" \
+    --foreground "$COLOR_FOREGROUND" \
+    "Raw Disk Image Installer ${VERSION}"
+
+gum spin --spinner=globe --title.foreground="$COLOR_TITLE" --title="Press any key to continue or wait 5s..." -- $KEYWAIT -t ""
+
+# Main menu
+SELECTED="start"
+
+# We quit if user hits ESC, Ctrl-C or selects Install/Abort
+while [ "$SELECTED" != "Install" ] && [ "$SELECTED" != "Abort" ] && [ -n "$SELECTED" ]; do
+    clear_and_print_title
+
+    SELECTED=$(gum choose \
+		   --header="Configuration Settings" \
+		   --cursor="➜ " \
+		   --cursor.foreground="$COLOR_FOREGROUND" \
+		   --item.foreground="250" \
+		   --selected.foreground="$COLOR_FOREGROUND" \
+		   --header.foreground="$COLOR_TITLE" \
+		   --limit=1 \
+		   --height=5 \
+		   "Select Keymap ($DEFAULT_KEYMAP)" \
+		   "Select Target Device ($TARGET_DEVICE)" \
+		   "Select Image ($(basename "$SOURCE_IMAGE"))" \
+		   "Abort" \
+		   "Install"
+	    )
+
+    case "$SELECTED" in
+	"Select Keymap"*)
+	    set_keymap
+	    ;;
+	"Select Target Device"*)
+	    select_target_device
+	    ;;
+	"Select Image"*)
+	    select_image
+	    ;;
+	"Abort" | "")
+	    gum style --foreground="$COLOR_TITLE" "Exiting..."
+	    exit 3
+	    ;;
+	"Install")
+	    if [ -z "$SOURCE_IMAGE" ]; then
+		gum style \
+		    --foreground="$COLOR_WARNING" \
+		    "You need to select a raw disk image first!"
+		$KEYWAIT -t ""
+		SELECTED="start"
+	    fi
+	    if [ -z "$TARGET_DEVICE" ]; then
+		gum style \
+		    --foreground="$COLOR_WARNING" \
+		    "You need to select a target device first!"
+		$KEYWAIT -t ""
+		SELECTED="start"
+	    fi
+	    ;;
+	*)
+	    echo "Internal Error: '$SELECTED'"
+	    exit 2
+	    ;;
+    esac
+done
+
+clear
+gum style \
+    --border rounded \
+    --margin "1 2" \
+    --padding "1 2" \
+    --border-foreground "$OPENSUSE_CYAN" \
+    --foreground "$OPENSUSE_GREEN" \
+    --bold \
+    "Source Image:" \
+    "$SOURCE_IMAGE" \
+    "Installation Target:" \
+    "$TARGET_DEVICE"
+
+
+if gum confirm \
+       --default \
+       --prompt.foreground "$COLOR_TEXT" \
+       --selected.background "$COLOR_WARNING" \
+       --selected.foreground "$COLOR_FOREGROUND" \
+       --unselected.background "$COLOR_BACKGROUND" \
+       "WARNING: PERMANENT DATA LOSS - Are you absolutely sure?"; then
+        gum style --foreground "$COLOR_TEXT" "Confirmed. Proceeding with writing $SOURCE_IMAGE to $TARGET_DEVICE..."
+    else
+        gum style --foreground "$COLOR_TEXT" "Aborted."
+        $KEYWAIT -t "" -s 2
+	exit 1
+    fi
+
+# Write the image
+dd if="$SOURCE_IMAGE" of="$TARGET_DEVICE" bs=4M status=progress conv=fsync oflag=direct

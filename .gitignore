@@ -1,0 +1,15 @@
+*.o
+*.lib
+*.a
+*.la
+*.lo
+*.so
+*.so.*
+build
+*~
+mkosi.log
+mkosi.output
+*.raw
+*.efi
+*.manifest
+*.img

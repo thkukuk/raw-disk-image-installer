@@ -1,0 +1,16 @@
+#! /bin/bash
+
+# Get the current date in the specific format: YYYY-MM-DD HH:MM:SS
+CURRENT_DATE=$(date "+%Y-%m-%d %H:%M:%S")
+
+cat /buildroot/usr/lib/os-release
+
+. /buildroot/usr/lib/os-release
+
+cat <<EOF > /buildroot/usr/lib/os-release
+NAME="Raw Disk Image Installer"
+ID="raw-disk-image-installer"
+VERSION_ID="${VERSION_ID}"
+PRETTY_NAME="Raw Disk Image Installer (${VERSION_ID}-${IMAGE_VERSION})"
+EOF
+
