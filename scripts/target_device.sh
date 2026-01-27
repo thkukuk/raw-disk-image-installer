@@ -14,7 +14,10 @@ select_target_device()
     # XXX Must be better doable...
     SCRIPT_DIR=$(dirname "$(realpath "$0")")
     CURRENT_PARTITION=$(df --output=source "$SCRIPT_DIR" | tail -n 1)
-    CURRENT_DISK_NAME=$(lsblk -no pkname "$CURRENT_PARTITION")
+    # Avoid that lsblk prints on error message about known rootfs
+    if [ "$CURRENT_PARTITION" != "rootfs" ]; then
+	CURRENT_DISK_NAME=$(lsblk -no pkname "$CURRENT_PARTITION")
+    fi
     [ -z "$CURRENT_DISK_NAME" ] && CURRENT_DISK_NAME=$(basename "$CURRENT_PARTITION")
 
     # Find all storage devices
@@ -93,8 +96,9 @@ select_target_device()
 	   --default \
 	   --prompt.foreground "$COLOR_TEXT" \
 	   --selected.background "$COLOR_WARNING" \
-	   --selected.foreground "$COLOR_FOREGROUND" \
+	   --selected.foreground "$COLOR_GRAY" \
 	   --unselected.background "$COLOR_BACKGROUND" \
+	   --unselected.foreground "$COLOR_GRAY" \
 	   "Are you sure you want to use $SELECTED_DEV?"; then
 	gum style --foreground "$COLOR_TEXT" "Confirmed. Proceeding with $SELECTED_DEV..."
 	TARGET_DEVICE="$SELECTED_DEV"

@@ -2,18 +2,18 @@
 
 # SPDX-License-Identifier: MIT
 
-COLOR_GREEN=10
+COLOR_GREEN=2
 COLOR_GRAY=250
 COLOR_RED=9
 COLOR_BLUE=21
-COLOR_DARKBLUE=18
-COLOR_CYAN=14
+COLOR_DARKBLUE=4
 
 COLOR_BACKGROUND=$COLOR_DARKBLUE
 COLOR_FOREGROUND=$COLOR_GREEN
+COLOR_LIGHT_FOREGROUND=10
 COLOR_ITEM=$COLOR_GRAY
 COLOR_TITLE=$COLOR_BLUE
-COLOR_TEXT=$COLOR_CYAN
+COLOR_TEXT=$COLOR_BLUE
 COLOR_WARNING=$COLOR_RED
 
 CURSOR="→"
@@ -44,7 +44,7 @@ clear_and_print_title()
 	--align center \
 	--width 80 \
 	--background "$COLOR_BACKGROUND" \
-	--foreground "$COLOR_FOREGROUND" \
+	--foreground "$COLOR_LIGHT_FOREGROUND" \
 	"Raw Disk Image Installer ${VERSION}"
     echo ""
 }
@@ -82,9 +82,9 @@ gum style \
     --margin "1 2" \
     --padding "2 4" \
     --border-background "$COLOR_BACKGROUND"\
-    --border-foreground "$COLOR_FOREGROUND" \
+    --border-foreground "$COLOR_LIGHT_FOREGROUND" \
     --background "$COLOR_BACKGROUND" \
-    --foreground "$COLOR_FOREGROUND" \
+    --foreground "$COLOR_LIGHT_FOREGROUND" \
     "Raw Disk Image Installer ${VERSION}"
 
 gum spin --spinner=globe --title.foreground="$COLOR_TITLE" --title="Press any key to continue or wait 5s..." -- $KEYWAIT -t ""
@@ -98,11 +98,11 @@ while [ "$SELECTED" != "Install" ] && [ "$SELECTED" != "Abort" ] && [ -n "$SELEC
 
     SELECTED=$(gum choose \
 		   --header="Configuration Settings" \
+		   --header.foreground="$COLOR_TITLE" \
 		   --cursor="${CURSOR} " \
 		   --cursor.foreground="$COLOR_FOREGROUND" \
 		   --item.foreground="$COLOR_ITEM" \
 		   --selected.foreground="$COLOR_FOREGROUND" \
-		   --header.foreground="$COLOR_TITLE" \
 		   --limit=1 \
 		   "Select Keymap ($DEFAULT_KEYMAP)" \
 		   "Select Target Device ($TARGET_DEVICE)" \
