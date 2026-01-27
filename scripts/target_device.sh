@@ -94,7 +94,7 @@ select_target_device()
     echo ""
     if gum confirm \
 	   --default \
-	   --prompt.foreground "$COLOR_TEXT" \
+	   --prompt.foreground "$COLOR_WARNING" \
 	   --selected.background "$COLOR_WARNING" \
 	   --selected.foreground "$COLOR_GRAY" \
 	   --unselected.background "$COLOR_BACKGROUND" \
