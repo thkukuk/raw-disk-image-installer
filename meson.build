@@ -1,5 +1,5 @@
 project(
-  'run0-wrappers',
+  'raw-disk-image-installer',
   'c',
   meson_version : '>= 0.61.0',
   default_options : [
@@ -21,6 +21,7 @@ conf.set_quoted('PACKAGE', meson.project_name())
 
 cc = meson.get_compiler('c')
 pkg = import('pkgconfig')
+inc = include_directories(['include'])
 
 add_project_arguments(['-D_GNU_SOURCE=1',
 		       '-DXTSTRINGDEFINES',
@@ -57,10 +58,15 @@ datadir = get_option('datadir')
 rdiidir = join_paths(prefixdir, get_option('libexecdir'), 'rdi-installer')
 systemunitdir = join_paths(prefixdir, 'lib/systemd/system')
 
-executable('keywait', 'src/keywait.c',
+executable('ifcfg-networkd', 'src/ifcfg-networkd.c',
+           include_directories : inc,
            install : true)
 
-configure_file(
+executable('keywait', 'src/keywait.c',
+           include_directories : inc,
+           install : true)
+
+rdi_installer = configure_file(
   input: 'scripts/rdi-installer.sh.in',
   output: 'rdi-installer',
   configuration: {
@@ -80,3 +86,5 @@ configure_file(output: 'config.h', configuration: conf)
 
 # Manual pages
 subdir('man')
+subdir('units')
+subdir('tests')

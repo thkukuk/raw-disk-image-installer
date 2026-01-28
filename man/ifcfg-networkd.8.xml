@@ -55,7 +55,7 @@
     <refsect2>
       <title>DHCP Configuration</title>
       <para>
-        <synopsis>ifcfg=<replaceable>interface</replaceable>=[try,]dhcp*,[rfc2132,]<replaceable>OPTIONS</replaceable>...</synopsis>
+        <synopsis>ifcfg=<replaceable>interface</replaceable>=dhcp*,[rfc2132,]<replaceable>OPTIONS</replaceable>...</synopsis>
       </para>
       <variablelist>
         <varlistentry>
@@ -85,7 +85,7 @@
     <refsect2>
       <title>Static Configuration</title>
       <para>
-        <synopsis>ifcfg=<replaceable>interface</replaceable>=[try,]<replaceable>IP_LIST</replaceable>,<replaceable>GW_LIST</replaceable>,<replaceable>DNS_LIST</replaceable>,<replaceable>DOMAIN_LIST</replaceable>,<replaceable>OPTIONS</replaceable>...</synopsis>
+        <synopsis>ifcfg=<replaceable>interface</replaceable>=<replaceable>IP_LIST</replaceable>,<replaceable>GW_LIST</replaceable>,<replaceable>DNS_LIST</replaceable>,<replaceable>DOMAIN_LIST</replaceable>,<replaceable>OPTIONS</replaceable>...</synopsis>
       </para>
       <para>
         Lists (IPs, Gateways, DNS, Domains) are space-separated. If a list contains spaces,
@@ -144,7 +144,7 @@
         <listitem><para>Read to obtain kernel boot parameters.</para></listitem>
       </varlistentry>
       <varlistentry>
-        <term><filename>/run/systemd/network/90-linuxrc-*.network</filename></term>
+        <term><filename>/run/systemd/network/50-ifcfg-*.network</filename></term>
         <listitem><para>Generated configuration files. These files are transient and will be lost on reboot.</para></listitem>
       </varlistentry>
     </variablelist>
