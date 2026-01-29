@@ -39,20 +39,20 @@ query_url()
 	return
     fi
 
-    # XXX better error check
-    if ! gum spin \
-	 --spinner=globe \
-	 --title "Pinging $URL..." \
-	 --title.foreground="$COLOR_TITLE" -- \
-         curl -o /dev/null --silent --head --fail --max-time $TIMEOUT \
-	 "$URL"; then
+    # some kind of error checking
+    gum style \
+	--foreground="$COLOR_TITLE" \
+	"Pinging $URL..."
+
+    if ! curl -o /dev/null --silent --show-error --head --fail \
+	 --max-time $TIMEOUT "$URL"; then
         gum style \
             --foreground=$COLOR_WARNING \
             "Unreachable: $URL"
 
         gum style \
-	     --foreground=$COLOR_TEXT \
-	    "The URL has valid syntax, but the file does not exist or the server is not responding (Timeout: ${TIMEOUT}s)."
+	    --foreground=$COLOR_TEXT \
+	    "The URL has valid syntax, but something else is wrong."
 	$KEYWAIT -s 0
         return
     fi
