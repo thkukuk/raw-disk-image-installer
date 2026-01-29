@@ -3,6 +3,7 @@
 set -e
 
 IMAGE="${IMAGE_ID}-${IMAGE_VERSION}.${ARCHITECTURE}"
+IMAGE_UKI="${IMAGE_ID}-UKI-${IMAGE_VERSION}.${ARCHITECTURE}"
 
 echo "mkosi.postoutput ${IMAGE}" "$@"
 
@@ -10,12 +11,12 @@ echo "mkosi.postoutput ${IMAGE}" "$@"
 rm -v "${OUTPUTDIR}/${IMAGE}"
 
 # Create UEFI bootable raw disk image
-scripts/create_uefi_usbstick.sh "${OUTPUTDIR}/${IMAGE}.img"
+scripts/create_uefi_usbstick.sh "${OUTPUTDIR}/${IMAGE_UKI}.img"
 
 case $ARCHITECTURE in
     x86-64)
-	mmd -i "${OUTPUTDIR}/${IMAGE}.img"@@1048576 EFI EFI/BOOT
-	mcopy -i "${OUTPUTDIR}/${IMAGE}.img"@@1048576 "${OUTPUTDIR}/${IMAGE}.efi" ::EFI/BOOT/BOOTX64.EFI
+	mmd -i "${OUTPUTDIR}/${IMAGE_UKI}.img"@@1048576 EFI EFI/BOOT
+	mcopy -i "${OUTPUTDIR}/${IMAGE_UKI}.img"@@1048576 "${OUTPUTDIR}/${IMAGE}.efi" ::EFI/BOOT/BOOTX64.EFI
 	;;
     *)
 	echo "Unsupported architecture: '$ARCHITECTURE'" >&2

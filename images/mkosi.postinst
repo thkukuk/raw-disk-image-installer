@@ -1,7 +1,5 @@
 #! /bin/bash
 
-set -x
-
 # Setup configs and services
 echo FONT="eurlatgr.psfu" >> /buildroot/etc/vconsole.conf
 echo KEYMAP="us" >> /buildroot/etc/vconsole.conf
