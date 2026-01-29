@@ -17,45 +17,54 @@ query_url()
 {
     local TIMEOUT=5
 
-    clear_and_print_title
-    URL=$(gum input \
-	      --header="Please enter the image URL:" \
-	      --header.foreground="$COLOR_TITLE" \
-              --cursor.foreground="$COLOR_FOREGROUND" \
-	      --placeholder="https://")
+    URL=$SOURCE_IMAGE
 
-    if [[ -z "$URL" ]]; then
-	gum style --foreground="$COLOR_TEXT" "Cancelled."
-	$KEYWAIT -t "" -s 1
-	return
-    fi
+    while true; do
 
-    REGEX='^(https?|ftp)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
-    if [[ ! $URL =~ $REGEX ]]; then
-        gum style \
-	    --foreground=$COLOR_WARNING \
-	    "Error: Invalid URL syntax."
-	$KEYWAIT -s 0
-	return
-    fi
+	clear_and_print_title
+	URL=$(echo "$URL" | gum input \
+			      --header="Please enter the image URL:" \
+			      --header.foreground="$COLOR_TITLE" \
+			      --cursor.foreground="$COLOR_FOREGROUND" \
+			      --placeholder="https://")
 
-    # some kind of error checking
-    gum style \
-	--foreground="$COLOR_TITLE" \
-	"Pinging $URL..."
+	if [[ -z "$URL" ]]; then
+	    gum style --foreground="$COLOR_TEXT" "Cancelled."
+	    $KEYWAIT -t "" -s 1
+	    return
+	fi
 
-    if ! curl -o /dev/null --silent --show-error --head --fail \
-	 --max-time $TIMEOUT "$URL"; then
-        gum style \
-            --foreground=$COLOR_WARNING \
-            "Unreachable: $URL"
+	REGEX='^(https?|ftp)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+	if [[ ! $URL =~ $REGEX ]]; then
+            gum style \
+		--foreground=$COLOR_WARNING \
+		"Error: Invalid URL syntax."
+	    $KEYWAIT -s 0
+	    continue
+	fi
 
-        gum style \
-	    --foreground=$COLOR_TEXT \
-	    "The URL has valid syntax, but something else is wrong."
-	$KEYWAIT -s 0
-        return
-    fi
+	# some kind of error checking
+	gum style \
+	    --foreground="$COLOR_TITLE" \
+	    "Testing $URL..."
+
+	if ! curl -o /dev/null --silent --show-error --head --fail \
+	     --max-time $TIMEOUT "$URL"; then
+            gum style \
+		--foreground=$COLOR_WARNING \
+		"Unreachable: $URL"
+
+            gum style \
+		--foreground=$COLOR_TEXT \
+		"The URL has valid syntax, but something else is wrong."
+	    $KEYWAIT -s 0
+	    continue
+	fi
+
+	break
+
+    done
+
     SOURCE_IMAGE="$URL"
 }
 

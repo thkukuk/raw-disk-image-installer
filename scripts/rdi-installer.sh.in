@@ -167,7 +167,7 @@ while [ "$SELECTED" != "Install" ] && [ "$SELECTED" != "Abort" ] && [ -n "$SELEC
     esac
 done
 
-clear
+clear_and_print_title
 gum style \
     --align="center" \
     --border-foreground "$COLOR_FOREGROUND" \
@@ -177,9 +177,6 @@ gum style \
     "$SOURCE_IMAGE" \
     "Installation Target:" \
     "$TARGET_DEVICE"
-
-
-clear_and_print_title
 
 if gum confirm \
        --default \
@@ -228,9 +225,11 @@ else
 	gum spin --spinner=globe --title.foreground="$COLOR_TITLE" --title="Press any key to continue or wait 10s..." -- $KEYWAIT -t "" -s 10	# Write the image
     else
 	if ! pv "$IMAGE_TO_WRITE" | dd of="$TARGET_DEVICE" bs=4M conv=fsync oflag=direct ; then
+	    gum style --foreground="$COLOR_WARNING" "Failure writing the image"
 	    $KEYWAIT -s 0
 	else
-	    $KEYWAIT -s 10
+	    gum style --foreground="$COLOR_TEXT" "Image successfully written"
+	    $KEYWAIT -s 30
 	fi
     fi
     mountpoint -q "${TEMP_DIR}/mount" && umount "${TEMP_DIR}/mount"
