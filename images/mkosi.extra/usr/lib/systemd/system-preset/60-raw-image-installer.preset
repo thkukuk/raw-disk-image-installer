@@ -1,3 +1,4 @@
+enable ca-certificates-setup.service
 enable ifcfg-networkd.service
 enable rdii-ssh-setup.service
 enable systemd-networkd.service
