@@ -195,7 +195,7 @@ if gum confirm \
 # Check for URLs (http, https, ftp)
 if [[ "$SOURCE_IMAGE" =~ ^(https?|ftp):// ]]; then
     echo "URL Detected: $SOURCE_IMAGE" | gum style --foreground "$COLOR_TEXT"
-    curl -L -C - --fail --retry 5 --no-progress-meter "$SOURCE_IMAGE" | dd of=tmp.img bs=4M status=progress conv=fsync oflag=direct
+    curl -L -C - --fail --retry 5 --no-progress-meter "$SOURCE_IMAGE" | dd of=tmp.img status=progress conv=fsync oflag=direct
 else
     if [[ "$SOURCE_IMAGE" == /* ]]; then
 	echo "Absolute Path Detected: $SOURCE_IMAGE"
