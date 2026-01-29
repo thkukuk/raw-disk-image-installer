@@ -112,7 +112,7 @@ gum spin --spinner=globe --title.foreground="$COLOR_TITLE" --title="Press any ke
 SELECTED="start"
 
 # We quit if user hits ESC, Ctrl-C or selects Install/Abort
-while [ "$SELECTED" != "Install" ] && [ "$SELECTED" != "Abort" ] && [ -n "$SELECTED" ]; do
+while [ "$SELECTED" != "Install" ] && [ -n "$SELECTED" ]; do
     clear_and_print_title
 
     SELECTED=$(gum choose \
@@ -242,7 +242,7 @@ ACTION=$(gum choose \
 	     --item.foreground="$COLOR_ITEM" \
 	     --selected.foreground="$COLOR_FOREGROUND" \
 	     --limit=1 \
-	     "Reboot" "PowerOff")
+	     "Reboot" "Next Image" "PowerOff")
 case $ACTION in
     Reboot)
 	reboot
@@ -251,5 +251,6 @@ case $ACTION in
 	poweroff
 	;;
     *)
+	exec rdi-installer
 	;;
 esac
