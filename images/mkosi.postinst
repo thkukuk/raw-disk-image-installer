@@ -1,14 +1,12 @@
 #! /bin/bash
 
-# Get the current date in the specific format: YYYY-MM-DD HH:MM:SS
-CURRENT_DATE=$(date "+%Y-%m-%d %H:%M:%S")
+set -x
 
 # Setup configs and services
 echo FONT="eurlatgr.psfu" >> /buildroot/etc/vconsole.conf
+echo KEYMAP="us" >> /buildroot/etc/vconsole.conf
 
 # Create new os-release
-cat /buildroot/usr/lib/os-release
-
 . /buildroot/usr/lib/os-release
 
 cat <<EOF > /buildroot/usr/lib/os-release
@@ -18,3 +16,8 @@ VERSION_ID="${VERSION_ID}"
 PRETTY_NAME="Raw Disk Image Installer (${VERSION_ID}-${IMAGE_VERSION})"
 EOF
 
+# Create new issue
+cat <<EOF > /buildroot/usr/lib/issue.d/10-openSUSE.issue
+Raw Disk Image Installer ${VERSION_ID}-${IMAGE_VERSION} - Kernel \r (\l).
+
+EOF
