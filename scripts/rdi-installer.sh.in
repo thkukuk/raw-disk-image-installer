@@ -179,14 +179,14 @@ done
 clear_and_print_title
 gum style \
     --align="center" \
-    --border-foreground "$COLOR_FOREGROUND" \
-    --foreground "$COLOR_FOREGROUND" \
-    --bold \
+    --border=normal \
+    --border-foreground="$COLOR_FOREGROUND" \
+    --foreground="$COLOR_FOREGROUND" \
     "Source Image:" \
     "$SOURCE_IMAGE" \
     "Installation Target:" \
     "$TARGET_DEVICE"
-
+echo ""
 if gum confirm \
        --default \
        --prompt.foreground "$COLOR_WARNING" \
@@ -204,7 +204,9 @@ if gum confirm \
 # Check for URLs (http, https, ftp)
 if [[ "$SOURCE_IMAGE" =~ ^(https?|ftp):// ]]; then
     echo "URL Detected: $SOURCE_IMAGE" | gum style --foreground "$COLOR_TEXT"
-    curl -L -C - --fail --retry 5 --no-progress-meter "$SOURCE_IMAGE" | dd of=tmp.img status=progress conv=fsync oflag=direct
+    if ! curl -L -C - --fail --retry 5 --no-progress-meter "$SOURCE_IMAGE" | dd of="$TARGET_DEVICE" status=progress conv=fsync oflag=direct; then
+	$KEYWAIT -s 0
+    fi
 else
     if [[ "$SOURCE_IMAGE" == /* ]]; then
 	echo "Absolute Path Detected: $SOURCE_IMAGE"
