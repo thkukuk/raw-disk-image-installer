@@ -90,6 +90,15 @@ if [ -f "$VCONSOLE_FILE" ]; then
     DEFAULT_KEYMAP=$(source "$VCONSOLE_FILE" && echo "$KEYMAP")
 fi
 
+case $TERM in
+    xterm-*)
+	SPINNER="--spinner=globe"
+	;;
+    *)
+	SPINNER="--spinner=line"
+	;;
+esac
+
 clear
 
 # Splash screen at start
@@ -106,13 +115,10 @@ gum style \
     --foreground "$COLOR_LIGHT_FOREGROUND" \
     "Raw Disk Image Installer ${VERSION}"
 
-gum spin --spinner=globe --title.foreground="$COLOR_TITLE" --title="Press any key to continue or wait 5s..." -- $KEYWAIT -t ""
-
-# Main menu
-SELECTED="start"
+gum spin "$SPINNER" --title.foreground="$COLOR_TITLE" --title="Press any key to continue or wait 5s..." -- $KEYWAIT -t ""
 
 # We quit if user hits ESC, Ctrl-C or selects Install/Abort
-while [ "$SELECTED" != "Install" ] && [ -n "$SELECTED" ]; do
+while true; do
     clear_and_print_title
 
     SELECTED=$(gum choose \
@@ -127,7 +133,7 @@ while [ "$SELECTED" != "Install" ] && [ -n "$SELECTED" ]; do
 		   "Select Target Device ($TARGET_DEVICE)" \
 		   "Select Keymap ($DEFAULT_KEYMAP)" \
 		   "Abort" \
-		   "Install"
+		   "Start Installation"
 	    )
 
     case "$SELECTED" in
@@ -144,7 +150,7 @@ while [ "$SELECTED" != "Install" ] && [ -n "$SELECTED" ]; do
 	    gum style --foreground="$COLOR_TITLE" "Exiting..."
 	    exit 3
 	    ;;
-	"Install")
+	"Start Installation")
 	    if [ -z "$SOURCE_IMAGE" ]; then
 		gum style \
 		    --foreground="$COLOR_WARNING" \
@@ -159,6 +165,7 @@ while [ "$SELECTED" != "Install" ] && [ -n "$SELECTED" ]; do
 		$KEYWAIT -t ""
 		SELECTED="start"
 	    fi
+	    break
 	    ;;
 	*)
 	    echo "Internal Error: '$SELECTED'"
@@ -222,8 +229,9 @@ else
     fi
 
     if [ -n "$RDII_DEBUG" ]; then
-	gum spin --spinner=globe --title.foreground="$COLOR_TITLE" --title="Press any key to continue or wait 10s..." -- $KEYWAIT -t "" -s 10	# Write the image
+	gum spin "$SPINNER" --title.foreground="$COLOR_TITLE" --title="NOTHING WILL HAPPEN - Press any key to continue or wait 10s..." -- $KEYWAIT -t "" -s 10
     else
+	# Write the image
 	if ! pv "$IMAGE_TO_WRITE" | dd of="$TARGET_DEVICE" bs=4M conv=fsync oflag=direct ; then
 	    gum style --foreground="$COLOR_WARNING" "Failure writing the image"
 	    $KEYWAIT -s 0
@@ -242,13 +250,16 @@ ACTION=$(gum choose \
 	     --item.foreground="$COLOR_ITEM" \
 	     --selected.foreground="$COLOR_FOREGROUND" \
 	     --limit=1 \
-	     "Reboot" "Next Image" "PowerOff")
+	     "Reboot" "Next Image" "PowerOff" "Exit")
 case $ACTION in
     Reboot)
 	reboot
 	;;
     PowerOff)
 	poweroff
+	;;
+    Exit)
+	exit 0
 	;;
     *)
 	exec rdi-installer
