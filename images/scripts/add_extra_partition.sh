@@ -2,7 +2,7 @@
 
 set -e
 
-IMG_NAME=${1:-"uefi-usbstick.img"}
+IMG_NAME=${1}
 PART_SIZE=${2:-"8G"}
 LABEL=${3:-"images"}
 FS_TYPE=${4:-"ext4"}
@@ -10,7 +10,7 @@ PART_EXTRA_SPACE="2M"
 SGDISK="/usr/sbin/sgdisk"
 
 usage() {
-    echo "Usage: $0 [[[[<image_file>] <size>] <label>] <fs_type>]"
+    echo "Usage: $0 <image_file> [[[<size>] <label>] <fs_type>]"
     echo "  <size>    is 'xxxM' or 'xxxG'"
     echo "  <label>   is the filesystem label, defaults to $LABEL"
     echo "  <fs_type> must be 'xfs' or 'ext4'"
@@ -21,6 +21,11 @@ if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     usage
     exit 0
 fi
+
+if [ -z "$IMG_NAME" ]; then
+    echo "Error: no image provided."
+    usage
+    exit 1
 
 if [ ! -f "$IMG_NAME" ]; then
     echo "Error: File '$IMG_NAME' not found."
